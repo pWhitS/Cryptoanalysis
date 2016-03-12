@@ -7,6 +7,7 @@ p4 = "allocated demonstration cocoanuts imprecisions mikado skewer ennobled cath
 p5 = "shellackers ballets unselfishly meditatively titaness highballed serenaders ramshorns bottlenecks clipsheet unscriptural empoisoned flocking kantians ostensibilities heigh hydrodynamics qualifier million unlading distributed crinkliest conte germ certifier weaklings nickeled watson cutis prenticed debauchery variously puccini burgess landfalls nonsecular manipulability easterlies encirclements nescient imperceptive dentally sudsers reediness polemical honeybun bedrock anklebones brothering narks"
 
 
+plaintext = ""
 ciphertext = raw_input("Enter Ciphertext pls: ")
 print
 
@@ -18,17 +19,18 @@ l3 = len(p3.split(" ")[0])
 l4 = len(p4.split(" ")[0])
 l5 = len(p5.split(" ")[0])
 
-clen = len(cipherList[0])
+firstword = cipherList[0]
+fwlen = len(firstword.split(","))
 
-if clen == l1:
+if fwlen == l1:
 	plaintext = p1
-elif clen == l2:
+elif fwlen == l2:
 	plaintext = p2
-elif clen == l3:
+elif fwlen == l3:
 	plaintext = p3
-elif clen == l4:
+elif fwlen == l4:
 	plaintext = p4
-elif clen == l5:
+elif fwlen == l5:
 	plaintext = p5
 
 print "My plaintext guess: " + plaintext
