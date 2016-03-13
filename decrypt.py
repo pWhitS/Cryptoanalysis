@@ -207,7 +207,7 @@ class Word:
 		# get all words of matching length
 		sublist = self.master.english_words_by_length[len(self.cipherword)]
 		# sort the words by their "scoreWord" value; see scoreWord() below for details
-		sublist = sorted(sublist, key=lambda word: scoreWord(word,self.key.letter_freq_map), reverse=True)
+		sublist = sorted(sublist, key=lambda word: self.scoreWord(word,self.key.letter_freq_map), reverse=True)
 		self.possible_guesses = []
 		for word in sublist:
 			good_word = True
@@ -224,6 +224,17 @@ class Word:
 			# if the word had no conflicting mappings, append it to the list of guesses
 			if good_word:
 				self.possible_guesses.append(word)
+
+	# returns a numeric score for a given word based on the sum of the numbers they are mapped to as determined by letVals; we use
+	# this to return sums of the frequencies for all letters in a given word, which we use to determine the order of our guesses
+	def scoreWord(self, word, letVals):
+	    score = 0
+	    for letter in word:
+	        if letter not in letVals:
+	            pass
+	        else:
+	            score += letVals[letter]
+	    return score
 
 # a simple class to maintain the partial (possibly complete) key we develop through decryption
 class Key:
@@ -257,11 +268,11 @@ class Key:
 
 	# returns a Boolean reflecting whether or not the number has been mapped yet
 	def number_is_mapped(self,number):
-		return self.num_to_let[number] is not None
+		return self.num_to_let[int(number)] is not None
 
 	# returns a Boolean reflecting whether mapping the given letter and number results in a conflict with existing mappings
 	def mapping_is_correct(self,letter,number):
-		return letter == self.num_to_let[number]
+		return letter == self.num_to_let[int(number)]
 
 	# sets up the mappings for num_to_let, let_to_num and letter_count def init_num_let_mappings(self):
 	def init_num_let_mappings(self):
@@ -306,16 +317,6 @@ class Key:
 class KeyMappingException(Exception):
 	pass
 
-# returns a numeric score for a given word based on the sum of the numbers they are mapped to as determined by letVals; we use
-# this to return sums of the frequencies for all letters in a given word, which we use to determine the order of our guesses
-def scoreWord(word, letVals):
-    score = 0
-    for letter in word:
-        if letter not in letVals:
-            pass
-        else:
-            score += letVals[letter]
-    return score
 
 class InitialAnalysis:
 
@@ -331,9 +332,9 @@ class InitialAnalysis:
 		self.p5 = "shellackers ballets unselfishly meditatively titaness highballed serenaders ramshorns bottlenecks clipsheet unscriptural empoisoned flocking kantians ostensibilities heigh hydrodynamics qualifier million unlading distributed crinkliest conte germ certifier weaklings nickeled watson cutis prenticed debauchery variously puccini burgess landfalls nonsecular manipulability easterlies encirclements nescient imperceptive dentally sudsers reediness polemical honeybun bedrock anklebones brothering narks"
 		self.plist = [self.p1, self.p2, self.p3, self.p4, self.p5]
 
-
+	#compares number of words in the ciphertext to the plaintexts
+	#removes plaintexts from the plist list if it doesn't match 
 	def compareNumWords(self):
-		#compares number of words in the ciphertext to the 5 plaintexts
 		num_cipher_words = len(self.ciphertext.split(" "))
 		i = 0
 		bound = len(self.plist)
@@ -345,7 +346,8 @@ class InitialAnalysis:
 				continue
 			i += 1
 
-
+	#compares length of words in the ciphertext to the plaintexts
+	#removes plaintexts from the plist list if it doesn't match 
 	def compareWordLengths(self):
 		cipherList = self.ciphertext.split(" ")
 		cipher_len_words_list = []
@@ -368,7 +370,31 @@ class InitialAnalysis:
 				continue
 			i += 1
 
+	#Creates the key mapping for the chosen plaintext
+	#If the mapping is 'wrong' then the initial analysis has failed
+	#This method assumes only one plaintext is left
+	def checkKeyMapping(self):
+		plaintext = self.plist[0].replace(" ", "")
+		cipherwords = self.ciphertext.split(" ")
+		cipherletters = []
 
+		for word in cipherwords:
+			cipherletters += word.split(",")
+
+		for i in range(0, len(plaintext)):
+			if self.key.number_is_mapped(int(cipherletters[i])):
+				continue
+
+			try:
+				self.key.add_map(int(cipherletters[i]), plaintext[i])
+			except KeyMappingException, kme:
+				return False
+
+		return True
+
+
+	#Performs the analysis technique of checking plaintexts against the plaintext dictionary
+	#If analysis fails, moves onto the second analysis technique
 	def initAnalysis(self):
 		self.compareNumWords()
 		if len(self.plist) == 0:
@@ -378,15 +404,14 @@ class InitialAnalysis:
 		if len(self.plist) == 0:
 			return False
 
-		if len(self.plist) > 1:
-			return "wat"
+		#At this point its only possible for there to be one plaintext
+		if self.checkKeyMapping() == False:
+			return False
 
 		return self.plist[0]
 
 
-	def buildKeyMapping(self):
-		pass
-
+	
 
 
 def removeLastWord(ctext):
