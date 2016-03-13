@@ -322,7 +322,7 @@ def main():
 
 	ds = DecryptionScheme(ciphertext)
 	plaintext = ds.decrypt()
-	lword =  ds.decryptLastWord(lastword)
+	lword =  ds.decryptSingleWord(lastword)
 
 	print "\nMy plaintext guess is: "
 	print plaintext, lword
