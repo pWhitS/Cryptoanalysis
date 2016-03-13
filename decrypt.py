@@ -247,7 +247,13 @@ class Key:
 		self.letter_count[letter] += 1
 
 	def decrypt_number(self, number):
-		return self.num_to_let[int(number)]
+		if self.number_is_mapped(number):
+			return self.num_to_let[int(number)]
+		else:
+			for letter in self.let_to_num:
+				if self.letter_count[letter] < self.letter_freq_map[letter]:
+					self.add_map(number,letter)
+					return letter
 
 	# returns a Boolean reflecting whether or not the number has been mapped yet
 	def number_is_mapped(self,number):
