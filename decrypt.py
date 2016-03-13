@@ -52,7 +52,7 @@ class DecryptionScheme:
 		for i in range(len(self.sorted_ciphertext)):
 			cipherword = self.sorted_ciphertext[i]
 			plainword = sorted_plainwords[i]
-			plainwords[self.cipherword_positions[str(cipherword)]] = plainword
+			plainwords[self.cipherword_positions[str(cipherword)].pop()] = plainword
 
 		# return the plaintext
 		return " ".join(plainwords)
@@ -124,7 +124,9 @@ class DecryptionScheme:
 				word[i] = int(word[i])
 		i = 0
 		for cipherword in cipher_words:
-			self.cipherword_positions[str(cipherword)] = i
+			if str(cipherword) not in self.cipherword_positions:
+				self.cipherword_positions[str(cipherword)] = []
+			self.cipherword_positions[str(cipherword)].append(i)
 			i += 1
 		self.sorted_ciphertext = sorted(cipher_words, key=lambda word: len(word), reverse=True)
 
