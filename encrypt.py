@@ -29,16 +29,18 @@ key["z"] = [102]
 f = open("english_words.txt")
 # maxlen = 0
 # maxword = None
-for line in f:
-	word = line.strip()
-	len_word = len(word)
-	if len_word == 22:
-		pt = word
-		break
-f.close()
-print pt
+# for line in f:
+# 	word = line.strip()
+# 	len_word = len(word)
+# 	if len_word == 22:
+# 		pt = word
+# 		break
+# f.close()
+# print pt
 
 # pt = "sconced pouch bogart lights coastal philip nonexplosive shriller outstripping underbidding nightshirts colly editorializer trembler unresistant resins anthrax polypus research parapets gratuitous corespondent pyrometer breveted psychoneurosis scoutings almightily endoscopes cyanosis kayaker hake william blunted incompressibility lacer cumquat aniline agileness academe obstacle toothpick nondistribution rebukes concertizes industrialist plenipotentiary swagmen kevils dredge ostensible atavistic"
+pt = raw_input(">> Enter your plaintext: ")
+print "\nThe ciphertet is: "
 ct = ""
 # print maxword
 i = 0
