@@ -98,6 +98,7 @@ class DecryptionScheme:
 			self.cipherword_positions[str(cipherword)] = i
 			i += 1
 		self.sorted_ciphertext = sorted(cipher_words, key=lambda word: self.word_length_freq_map[len(word)])
+		# print "len" + str(len(self.sorted_ciphertext[0]))
 
 	def print_sorted_ciphertext(self):
 		print self.sorted_ciphertext
@@ -127,22 +128,36 @@ class Word:
 		# 	self.plainword = word
 		# 	self.next = Word(master.sorted_ciphertext[self.cipherword_number+1],cipherword_number+1,key,self,master)
 		else:
+			# print self.possible_guesses
+			# print "num guesses" + str(len(self.possible_guesses))
 			for word in self.possible_guesses:
+				# print word
 				try:
 					for i in range(len(self.cipherword)):
 						if not self.key.number_is_mapped(self.cipherword[i]):
 							self.key.add_map(self.cipherword[i],word[i])
 					self.plainword = word
+					# print "\n******\n"
+					# print self.plainword
+					# if self.prev:
+					# 	print self.prev.plainword
+					# 	if self.prev.prev:
+							# print self.prev.prev.plainword
+					# print "\n******\n"
 					if (self.cipherword_number) < (len(self.master.sorted_ciphertext) - 1):
-						self.next = Word(master.sorted_ciphertext[self.cipherword_number+1],self.cipherword_number+1,self.key,self,self.master)
+						self.next = Word(self.master.sorted_ciphertext[self.cipherword_number+1],self.cipherword_number+1,self.key,self,self.master)
 						self.next.decrypt()
 				except KeyMappingException as e:
+					# print "EXCEPTION: " + word
 					self.plainword = None
 					self.next = None
 					self.key = copy.deepcopy(self.source_key)
-					continue					
+					continue
+				else:
+					break				
 			if self.plainword == None:
-				raise KeyMappingException("All possible plainwords for cipherword {0} have been tried".format(str(cipherword)))
+				# print self.cipherword_number
+				raise KeyMappingException("All possible plainwords for cipherword {0} have been tried".format(str(self.cipherword)))
 
 	def filter(self):
 		sublist = self.master.english_words_by_length[len(self.cipherword)]
@@ -150,6 +165,10 @@ class Word:
 		for word in sublist:
 			good_word = True
 			for i in range(len(self.cipherword)):
+				# print self.key.number_is_mapped(self.cipherword[i])
+				# print self.cipherword[i]
+				# print word[i]
+				# print self.key.mapping_is_correct(word[i],self.cipherword[i])
 				if self.key.number_is_mapped(self.cipherword[i]):
 					if not self.key.mapping_is_correct(word[i],self.cipherword[i]):
 						good_word = False
@@ -174,16 +193,21 @@ class Key:
 		self.init_num_let_mappings()
 
 	def add_map(self,number,letter):
+		# if letter == 'b':
+			# print "LETTER b: {0}".format(number)
 		if self.letter_count[letter] == self.letter_freq_map[letter]:
+			# print "too many mapped: {0}, {1}".format(number,letter)
+			# print self.let_to_num
 			raise KeyMappingException("The letter {0} has already been mapped by {1} numbers, the max number of times".format(letter,self.letter_count[letter]))
 		if self.number_is_mapped(number):
+			# print "number alredy mapped"
 			raise KeyMappingException("The number {0} has already been mapped to letter {1}".format(number,letter))
 		self.num_to_let[number] = letter
 		self.let_to_num[letter].append(number)
 		self.letter_count[letter] += 1
 
 	def number_is_mapped(self,number):
-		return self.num_to_let[number] is None
+		return self.num_to_let[number] is not None
 
 	def mapping_is_correct(self,letter,number):
 		return letter == self.num_to_let[number]
@@ -195,7 +219,7 @@ class Key:
 			self.letter_count[letter] = 0
 
 		for i in range(103):
-			self.num_to_let.append(0)
+			self.num_to_let.append(None)
 
 	def init_letter_freq(self):
 		self.letter_freq_map["a"] = 8
@@ -231,7 +255,9 @@ class KeyMappingException(Exception):
 def main():
 	# ct = raw_input(">>> Enter the ciphertext: ")
 	# ds = DecryptionScheme("98,23,5,23 34,23,56,34 34,11,23")
-	ds = DecryptionScheme("0,56,88,45,12,42,78,17,82,84,4,8,48,44,82,33,52,24,55,86,0,72,41,6,60,40,82,52")
+	ds = DecryptionScheme("78,11,65,60,11,26,12 69,61,93,11,37 8,63,31,6,74,91 48,42,31,33,92,82 9,63,4,78,86,2,48 69,37,42,48,39,69 58,65,55,18,99,69,50,61,78,40,96,21 80,37,72,45,50,48,22,76")# 63,95,85,78,89,76,39,69,69,45,55,31 93,54,14,17,74,8,42,12,14,41,58,31 55,42,31,33,92,82,33,40,76,84,80 10,63,48,50,100 28,12,41,86,63,72,42,0,50,41,102,24,74 88,72,19,52,8,50,27,72 95,54,72,24,82,40,80,91,4,56,88 72,16,82,44,54,82 6,60,88,33,74,0,99 69,67,48,100,69,93,80 76,17,80,21,2,74,10,33 69,4,72,0,69,28,86,82 31,74,6,87,95,43,84,61,94,78 11,61,72,21,82,69,63,54,14,20,60,87 69,100,72,65,52,23,92,27,72 8,76,22,96,26,90,17,14 69,80,100,9,35,63,54,22,94,72,65,82,44,80 82,9,61,94,87,44,54,31,80 6,48,52,44,31,35,91,45,50,100 22,54,14,61,80,10,67,69,25,78 11,100,2,57,67,78,41,82 47,0,100,4,47,16,72 35,6,47,26 97,41,48,50,40,6,52 8,48,94,60,89,26,14 39,56,9,67,52,69,74,18,78,80,45,8,42,50,39,89,100 50,4,10,18,74 10,93,52,71,93,6,88 2,58,45,48,42,59,22 0,31,45,50,19,59,23,82,78 2,10,6,12,24,52,28 61,8,80,88,0,11,48,18 89,63,65,86,37,69,45,10,47 59,65,56,12,45,78,92,76,39,8,94,84,40,65,59 74,18,8,95,47,26,80 10,61,58,10,25,74,91,39,102,22,78 40,57,12,95,82,84,74,40,4,50,39,78,89 69,48,17,59,39,69,63,87,16,57,84,39,6,72,100 82,97,0,31,52,27,60 47,20,96,39,50,82 14,74,21,12,31,27 63,80,91,22,59,82,41,8,50,21 6,91,2,96,43,78,92,42,9")
+	# ds = DecryptionScheme("12,41,82,22,80,85,4,8,48,43,80,52,27,59,85,6,74,45,4,57,44,78,52")
+	# ds = DecryptionScheme("9,63,94,60,92,26,72,11,48,2,80,82,42,29,39,9,0,91,40,67,59,78 0,56,88,45,12,42,78,17,82,84,4,8,48,44,82,33,52,24,55,86,0,72,41,6,60,40,82,52 12,41,82,22,80,85,4,8,48,43,80,52,27,59,85,6,74,45,4,57,44,78,52")
 	plain = ds.decrypt()
 	print plain
 	ds.print_key()

@@ -27,21 +27,27 @@ key["y"] = [100,101]
 key["z"] = [102]
 
 f = open("english_words.txt")
-maxlen = 0
-maxword = None
+# maxlen = 0
+# maxword = None
 for line in f:
 	word = line.strip()
 	len_word = len(word)
-	if len_word > maxlen:
-		maxword = word
-		maxlen = len_word
+	if len_word == 22:
+		pt = word
+		break
 f.close()
+print pt
 
+# pt = "sconced pouch bogart lights coastal philip nonexplosive shriller outstripping underbidding nightshirts colly editorializer trembler unresistant resins anthrax polypus research parapets gratuitous corespondent pyrometer breveted psychoneurosis scoutings almightily endoscopes cyanosis kayaker hake william blunted incompressibility lacer cumquat aniline agileness academe obstacle toothpick nondistribution rebukes concertizes industrialist plenipotentiary swagmen kevils dredge ostensible atavistic"
 ct = ""
-print maxword
+# print maxword
 i = 0
-for char in maxword:
-	ct += str(key[char][i % len(key[char])]) + ","
-	i += 2
+for char in pt:
+	if char == " ":
+		ct = ct[:len(ct)-1] 
+		ct += " "
+	else:
+		ct += str(key[char][i % len(key[char])]) + ","
+		i += 2
 # ct.strip(",")
 print ct[:len(ct)-1]
