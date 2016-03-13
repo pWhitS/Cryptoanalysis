@@ -26,7 +26,7 @@ key["x"] = [99]
 key["y"] = [100,101]
 key["z"] = [102]
 
-f = open("english_words.txt")
+# f = open("english_words.txt")
 # maxlen = 0
 # maxword = None
 # for line in f:

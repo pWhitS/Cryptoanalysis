@@ -1,8 +1,9 @@
 import copy
-import random
+import argparse
 import sys
 
 ENGLISH_WORDS_FN = "english_words.txt"
+VERBOSE = False
 # PLAINTEXT_FN = "plaintext_dictionary.txt"
 
 # Main class which organizes the recursive decryption process
@@ -151,17 +152,20 @@ class Word:
 		# filter the list of possible guesses
 		self.filter()
 
-		# MESSAGE_SET = False
+		if VERBOSE:
+			MESSAGE_SET = False
 
 		# if there are no possible guesses, raise our custom exception (which would be caught by the caller)
 		if len(self.possible_guesses) == 0:
 			raise KeyMappingException("Current mapping allows for no possible guess")
 		else:
-			# guess_num = 0
+			if VERBOSE:
+				guess_num = 0
 
 			# cycle over the possible guesses determined by filter()
 			for word in self.possible_guesses:
-				# guess_num += 1
+				if VERBOSE:
+					guess_num += 1
 
 				# we use a try-catch to catch any instances of our custom exception, which might be thrown by
 				# key.add_map() or next.decrypt()
@@ -173,11 +177,12 @@ class Word:
 							self.key.add_map(self.cipherword[i],word[i])
 					self.plainword = word
 
-					# if self.cipherword_number == 0:
-						# print ""
-					# message = "WORD #{0} - {1}/{2}: {3} <---> ".format(self.cipherword_number, guess_num,len(self.possible_guesses), word)
-					# MESSAGE_SET = True
-					# sys.stdout.write(message)
+					if VERBOSE:
+						if self.cipherword_number == 0:
+							print ""
+						message = "WORD #{0} - {1}/{2}: {3} <---> ".format(self.cipherword_number, guess_num,len(self.possible_guesses), word)
+						MESSAGE_SET = True
+						sys.stdout.write(message)
 
 					# if we aren't on the last ciphertext word, setup and decrypt the next ciphertext word
 					if (self.cipherword_number) < (len(self.master.sorted_ciphertext) - 1):
@@ -185,9 +190,10 @@ class Word:
 						self.next.decrypt()
 				# raised whenever a conflict in the key mapping is found; we fail gracefully and guess the next word
 				except KeyMappingException as e:
-					# if MESSAGE_SET:
-						# sys.stdout.write("\b" * (len(message)))
-					# MESSAGE_SET = False
+					if VERBOSE:
+						if MESSAGE_SET:
+							sys.stdout.write("\b" * (len(message)))
+						MESSAGE_SET = False
 
 					# if a conflict was found with the last guess, remove the plainword setting (if any), the reference to next (if any)
 					# and revert the key to the key given when this instance was created (this is why we have source_key and key, to
@@ -306,17 +312,6 @@ class Key:
 class KeyMappingException(Exception):
 	pass
 
-# returns a numeric score for a given word based on the sum of the numbers they are mapped to as determined by letVals; we use
-# this to return sums of the frequencies for all letters in a given word, which we use to determine the order of our guesses
-def scoreWord(word, letVals):
-    score = 0
-    for letter in word:
-        if letter not in letVals:
-            pass
-        else:
-            score += letVals[letter]
-    return score
-
 class InitialAnalysis:
 
 	def __init__(self, ctext):
@@ -387,7 +382,16 @@ class InitialAnalysis:
 	def buildKeyMapping(self):
 		pass
 
-
+# returns a numeric score for a given word based on the sum of the numbers they are mapped to as determined by letVals; we use
+# this to return sums of the frequencies for all letters in a given word, which we use to determine the order of our guesses
+def scoreWord(word, letVals):
+    score = 0
+    for letter in word:
+        if letter not in letVals:
+            pass
+        else:
+            score += letVals[letter]
+    return score
 
 def removeLastWord(ctext):
 	clist = ctext.split(" ")
@@ -395,28 +399,44 @@ def removeLastWord(ctext):
 	clist = clist[:-1]
 	return " ".join(clist), lword
 
+def parse_args():
+	parser = argparse.ArgumentParser(description='Decryption Script: a solution for decrypting the ciphertexts for Project 1 in CS-GY 6903 Applied Cryptography; Team: Fernando Maymi, Patrick Whitsell and Casey McGinley')
+	parser.add_argument("-v", "--verbose", action="store_true", help="Outputs decryption attempts to stdout; useful for debugging")
+	parser.add_argument("-s", "--supress_naive_analysis", action="store_true", help="Suppresses the use of our InitialAnalysis class entirely")
+	return parser.parse_args()
+
 # execute the script
 def main():
+	global VERBOSE
+	use_second_analysis = False
+	args = parse_args()
+	if args.verbose:
+		VERBOSE = True
+	if args.supress_naive_analysis:
+		use_second_analysis = True
+
 	ciphertext = raw_input(">> Enter the ciphertext: ")
 
-	#analysis for part 1
-	ia = InitialAnalysis(ciphertext)
-	plaintext = ia.initAnalysis()
-	if plaintext != False:
+	if not use_second_analysis:
+		#analysis for part 1
+		ia = InitialAnalysis(ciphertext)
+		plaintext = ia.initAnalysis()
+		if plaintext != False:
+			print "\nMy plaintext guess is: "
+			print plaintext
+		else:
+			use_second_analysis = True
+
+	if use_second_analysis:
+		#analysis for part 2
+		ciphertext, lastword = removeLastWord(ciphertext)
+
+		ds = DecryptionScheme(ciphertext)
+		plaintext = ds.decrypt()
+		lword =  ds.decryptSingleWord(lastword)
+
 		print "\nMy plaintext guess is: "
-		print plaintext
-		return
-
-	#analysis for part 2
-	ciphertext, lastword = removeLastWord(ciphertext)
-	# print "\n" + ciphertext + "\n" + lastword
-
-	ds = DecryptionScheme(ciphertext)
-	plaintext = ds.decrypt()
-	lword =  ds.decryptSingleWord(lastword)
-
-	print "\nMy plaintext guess is: "
-	print plaintext, lword
+		print plaintext, lword
 
 if __name__ == "__main__":
 	main()
