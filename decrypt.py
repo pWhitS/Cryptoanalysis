@@ -434,7 +434,7 @@ def main():
 
 	#analysis for part 2
 	ciphertext, lastword = removeLastWord(ciphertext)
-	print "\n" + ciphertext + "\n" + lastword
+	# print "\n" + ciphertext + "\n" + lastword
 
 	ds = DecryptionScheme(ciphertext)
 	plaintext = ds.decrypt()
