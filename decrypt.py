@@ -40,6 +40,17 @@ class DecryptionScheme:
 			plainwords[self.cipherword_positions[str(cipherword)]] = plainword
 		return " ".join(plainwords)
 
+
+	def decryptLastWord(self, lword):
+		ptext = ""
+		nums = lword.split(",")
+
+		for n in nums:
+			ptext += self.key.decrypt_number(int(n))
+
+		return ptext
+
+
 	def print_key(self):
 		print "Letter to Num:"
 		print self.key.let_to_num
@@ -100,6 +111,7 @@ class DecryptionScheme:
 
 	def print_sorted_ciphertext(self):
 		print self.sorted_ciphertext
+
 
 class Word:
 
@@ -173,6 +185,9 @@ class Key:
 		self.let_to_num[letter].append(number)
 		self.letter_count[letter] += 1
 
+	def decrypt_number(self, number):
+		return self.num_to_let[int(number)]
+
 	def number_is_mapped(self,number):
 		return self.num_to_let[number] is not None
 
@@ -223,6 +238,7 @@ class Key:
 		self.letter_freq_map["y"] = 2
 		self.letter_freq_map["z"] = 1
 
+
 class KeyMappingException(Exception):
 	pass
 
@@ -231,8 +247,8 @@ def removeLastWord(ctext):
 	clist = ctext.split(" ")
 	lword = clist[len(clist)-1]
 	clist = clist[:-1]
+	return " ".join(clist), lword
 
-	return "".join(clist), lword
 
 def main():
 	ciphertext = raw_input(">> Enter the ciphertext: ")
@@ -240,8 +256,10 @@ def main():
 
 	ds = DecryptionScheme(ciphertext)
 	plaintext = ds.decrypt()
+	lword =  ds.decryptLastWord(lastword)
+
 	print "\nMy plaintext guess is: "
-	print plaintext
+	print plaintext, lword
 	# ds.print_key()
 
 if __name__ == "__main__":
