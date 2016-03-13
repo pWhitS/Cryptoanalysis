@@ -30,14 +30,22 @@ class DecryptionScheme:
 				raise Exception("A cipherword was not mapped. Our mapping failed :(")
 			else:
 				sorted_plainwords.append(curr.plainword)
+			if curr.next == None:
+				self.key = curr.key
 			curr = curr.next
 		if len(sorted_plainwords) < len(self.sorted_ciphertext):
 			raise Exception("Enough words were not decrypted. Our mapping failed :(")
 		for i in range(len(self.sorted_ciphertext)):
 			cipherword = self.sorted_ciphertext[i]
-			plainword = self.sorted_plainwords[i]
-			plainwords[self.cipherword_positions[cipherword]] = plainword
+			plainword = sorted_plainwords[i]
+			plainwords[self.cipherword_positions[str(cipherword)]] = plainword
 		return " ".join(plainwords)
+
+	def print_key(self):
+		print "Letter to Num:"
+		print self.key.let_to_num
+		print "Num to LEtter:"
+		print self.key.num_to_let
 
 	def init_word_length_freq_map(self):
 		self.word_length_freq_map[1] = 1
@@ -81,15 +89,18 @@ class DecryptionScheme:
 
 	def sort_ciphertext(self):
 		cipher_words = self.ciphertext.split(" ")
-		cipher_words = [int(word.split(",")) for word in cipher_words]
+		cipher_words = [word.split(",") for word in cipher_words]
+		for word in cipher_words:
+			for i in range(len(word)):
+				word[i] = int(word[i])
 		i = 0
 		for cipherword in cipher_words:
-			self.cipherword_positions[cipherword] = i
+			self.cipherword_positions[str(cipherword)] = i
 			i += 1
-		self.sort_ciphertext = sorted(cipher_words, key=lambda word: self.word_length_freq_map[len(word)])
+		self.sorted_ciphertext = sorted(cipher_words, key=lambda word: self.word_length_freq_map[len(word)])
 
 	def print_sorted_ciphertext(self):
-		print self.sort_ciphertext
+		print self.sorted_ciphertext
 
 class Word:
 
@@ -118,9 +129,9 @@ class Word:
 		else:
 			for word in self.possible_guesses:
 				try:
-					for i in range(len(cipherword)):
+					for i in range(len(self.cipherword)):
 						if not self.key.number_is_mapped(self.cipherword[i]):
-							self.key.add_map(cipherword[i],word[i])
+							self.key.add_map(self.cipherword[i],word[i])
 					self.plainword = word
 					if (self.cipherword_number) < (len(self.master.sorted_ciphertext) - 1):
 						self.next = Word(master.sorted_ciphertext[self.cipherword_number+1],self.cipherword_number+1,self.key,self,self.master)
@@ -139,8 +150,8 @@ class Word:
 		for word in sublist:
 			good_word = True
 			for i in range(len(self.cipherword)):
-				if number_is_mapped(self.cipherword[i]):
-					if not mapping_is_correct(word[i],self.cipherword[i]):
+				if self.key.number_is_mapped(self.cipherword[i]):
+					if not self.key.mapping_is_correct(word[i],self.cipherword[i]):
 						good_word = False
 						break
 			if good_word:
@@ -184,7 +195,7 @@ class Key:
 			self.letter_count[letter] = 0
 
 		for i in range(103):
-			num_to_let.append(0)
+			self.num_to_let.append(0)
 
 	def init_letter_freq(self):
 		self.letter_freq_map["a"] = 8
@@ -220,7 +231,10 @@ class KeyMappingException(Exception):
 def main():
 	# ct = raw_input(">>> Enter the ciphertext: ")
 	# ds = DecryptionScheme("98,23,5,23 34,23,56,34 34,11,23")
-	ds.print_sorted_ciphertext()
+	ds = DecryptionScheme("0,56,88,45,12,42,78,17,82,84,4,8,48,44,82,33,52,24,55,86,0,72,41,6,60,40,82,52")
+	plain = ds.decrypt()
+	print plain
+	ds.print_key()
 
 if __name__ == "__main__":
 	main()
