@@ -29,16 +29,22 @@ key["z"] = [102]
 f = open("english_words.txt")
 # maxlen = 0
 # maxword = None
-for line in f:
-	word = line.strip()
-	len_word = len(word)
-	if len_word == 22:
-		pt = word
-		break
-f.close()
-print pt
+# for line in f:
+# 	word = line.strip()
+# 	len_word = len(word)
+# 	if len_word == 22:
+# 		pt = word
+# 		break
+# f.close()
+# print pt
 
+<<<<<<< HEAD
 pt = "revelation revering rightest impersonalize juliennes scientists reemphasizing propose crony bald pampering discharged lincoln authoresses interacted laked bedmaker intolerably beltlines warningly worldliness serologic bottom guessed hangup vitiates snaky polypous manifolding sweatshirt divisiveness decapitation musketry versers pizzas aperies reorganizes fender presentations thereuntil fly entrapped causewayed shaped freemasonry nudging efflorescence hydrated zazen exegeses fracas unprogressivel"
+=======
+# pt = "sconced pouch bogart lights coastal philip nonexplosive shriller outstripping underbidding nightshirts colly editorializer trembler unresistant resins anthrax polypus research parapets gratuitous corespondent pyrometer breveted psychoneurosis scoutings almightily endoscopes cyanosis kayaker hake william blunted incompressibility lacer cumquat aniline agileness academe obstacle toothpick nondistribution rebukes concertizes industrialist plenipotentiary swagmen kevils dredge ostensible atavistic"
+pt = raw_input(">> Enter your plaintext: ")
+print "\nThe ciphertext is: "
+>>>>>>> b29be4c6cf437ac431d153af7bc2f0c1fdd47892
 ct = ""
 # print maxword
 i = 0
