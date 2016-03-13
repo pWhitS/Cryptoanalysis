@@ -304,6 +304,9 @@ class InitialAnalysis:
 		if len(self.plist) == 0:
 			return False
 
+		if len(self.plsit) > 1:
+			return "wat"
+
 		return self.plist[0]
 
 
