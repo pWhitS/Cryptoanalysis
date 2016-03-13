@@ -331,7 +331,6 @@ def main():
 		return
 
 	#analysis for part 2
-	return
 	ciphertext, lastword = removeLastWord(ciphertext)
 	print "\n" + ciphertext + "\n" + lastword
 
