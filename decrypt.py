@@ -249,44 +249,63 @@ class InitialAnalysis:
 		self.key = Key()
 		self.plaintext = ""
 		self.ciphertext = ctext
-		self.isPlaintext = [True, True, True, True, True]
 
 		self.p1 = "sconced pouch bogart lights coastal philip nonexplosive shriller outstripping underbidding nightshirts colly editorializer trembler unresistant resins anthrax polypus research parapets gratuitous corespondent pyrometer breveted psychoneurosis scoutings almightily endoscopes cyanosis kayaker hake william blunted incompressibility lacer cumquat aniline agileness academe obstacle toothpick nondistribution rebukes concertizes industrialist plenipotentiary swagmen kevils dredge ostensible atavistic p"
 		self.p2 = "revelation revering rightest impersonalize juliennes scientists reemphasizing propose crony bald pampering discharged lincoln authoresses interacted laked bedmaker intolerably beltlines warningly worldliness serologic bottom guessed hangup vitiates snaky polypous manifolding sweatshirt divisiveness decapitation musketry versers pizzas aperies reorganizes fender presentations thereuntil fly entrapped causewayed shaped freemasonry nudging efflorescence hydrated zazen exegeses fracas unprogressivel"
 		self.p3 = "boca ingestion financed indexer generalships boldfaces boughed tesla videotext expiation brasil kinglets duality rattlesnakes mailability valvelet whimperingly corralled stench fatal inapplicably uncourageous bubblers req jesse foetor bulgaria hueless pickwicks intrans gargles purgations subvarieties pettier caste decongestive replanned continual bribed pirog learning currier careers rustling swankily onetime prearranges stowage responder inwrapped coign concubines gyrus delta tripled sleetier m"
 		self.p4 = "allocated demonstration cocoanuts imprecisions mikado skewer ennobled cathect universalizes lucidity soldierly calor narthexes jiggling mutinousness relight mistook electra ogles chirk unsympathetic indorsed theomania gaper moths aerospace riboflavin sensorium teariest luckiest dither subparts purslane gloam dictatory conversed confides medullary fatsos barked yank chained changes magicians movables ravenousness dipsomaniac budded windjammers stayers dixie tepidities desexualization boodled dile"
 		self.p5 = "shellackers ballets unselfishly meditatively titaness highballed serenaders ramshorns bottlenecks clipsheet unscriptural empoisoned flocking kantians ostensibilities heigh hydrodynamics qualifier million unlading distributed crinkliest conte germ certifier weaklings nickeled watson cutis prenticed debauchery variously puccini burgess landfalls nonsecular manipulability easterlies encirclements nescient imperceptive dentally sudsers reediness polemical honeybun bedrock anklebones brothering narks"
-		self.plist = [p1, p2, p3, p4, p5]
+		self.plist = [self.p1, self.p2, self.p3, self.p4, self.p5]
 
 
 	def compareNumWords(self):
+		#compares number of words in the ciphertext to the 5 plaintexts
 		num_cipher_words = len(self.ciphertext.split(" "))
-		p_num_words_list = []
-		for i in len(0, self.plist):
-			p_num_words_list.append(len(self.plist[i].split(" ")))
-			
-		for i in range(0, len(p_num_words_list)):
-			if num_cipher_words != p_num_words_list[i]:
-				self.isPlaintext[i] = False
+		i = 0
+		bound = len(self.plist)
+
+		while i < bound:
+			if num_cipher_words != len(self.plist[i].split(" ")):
+				del self.plist[i]
+				bound -= 1	
+				continue
+			i += 1
 
 
 	def compareWordLengths(self):
-		pass
+		cipherList = self.ciphertext.split(" ")
+		cipher_len_words_list = []
+
+		for cword in cipherList:
+			cipher_len_words_list.append(len(cword.split(",")))
+
+		i = 0
+		bound = len(self.plist)
+		while i < bound:
+			plain_len_words_list = []
+			temp = self.plist[i].split(" ")
+
+			for pword in temp:
+				plain_len_words_list.append(len(pword))
+
+			if plain_len_words_list != cipher_len_words_list:
+				del self.plist[i]
+				bound -= 1
+				continue
+			i += 1
 
 
 	def initAnalysis(self):
-		cipherList = self.ciphertext.split(" ")
-		
 		self.compareNumWords()
-		#Check if all values are False (impossible for all values to be True)
-		if self.isPlaintext[1:] == self.isPlaintext[:-1]:
-			return "FALSE"
+		if len(self.plist) == 0:
+			return "False"
 
-		for i in range(0, len(self.isPlaintext)):
-			if self.isPlaintext[i] == False:
-				continue
+		self.compareWordLengths()
+		if len(self.plist) == 0:
+			return "False"
 
-
+		print self.plist
+		return "TRUE"
 
 
 	def buildKeyMapping(self):
