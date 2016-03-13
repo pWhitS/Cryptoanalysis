@@ -52,7 +52,7 @@ class DecryptionScheme:
 		for i in range(len(self.sorted_ciphertext)):
 			cipherword = self.sorted_ciphertext[i]
 			plainword = sorted_plainwords[i]
-			plainwords[self.cipherword_positions[str(cipherword)]] = plainword
+			plainwords[self.cipherword_positions[str(cipherword)].pop()] = plainword
 
 		# return the plaintext
 		return " ".join(plainwords)
