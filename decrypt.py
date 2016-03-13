@@ -298,14 +298,13 @@ class InitialAnalysis:
 	def initAnalysis(self):
 		self.compareNumWords()
 		if len(self.plist) == 0:
-			return "False"
+			return False
 
 		self.compareWordLengths()
 		if len(self.plist) == 0:
-			return "False"
+			return False
 
-		print self.plist
-		return "TRUE"
+		return self.plist[0]
 
 
 	def buildKeyMapping(self):
@@ -323,9 +322,15 @@ def removeLastWord(ctext):
 def main():
 	ciphertext = raw_input(">> Enter the ciphertext: ")
 
+	#analysis for part 1
 	ia = InitialAnalysis(ciphertext)
-	ia.initAnalysis()
+	plaintext = ia.initAnalysis()
+	if plaintext != False:
+		print "\nMy plaintext guess is: "
+		print plaintext
+		return
 
+	#analysis for part 2
 	return
 	ciphertext, lastword = removeLastWord(ciphertext)
 	print "\n" + ciphertext + "\n" + lastword
