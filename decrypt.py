@@ -41,7 +41,7 @@ class DecryptionScheme:
 		return " ".join(plainwords)
 
 
-	def decryptLastWord(self, lword):
+	def decryptSingleWord(self, lword):
 		ptext = ""
 		nums = lword.split(",")
 
