@@ -57,6 +57,15 @@ class DecryptionScheme:
 		# return the plaintext
 		return " ".join(plainwords)
 
+	def decryptSingleWord(self, lword):
+		ptext = ""
+		nums = lword.split(",")
+
+		for n in nums:
+			ptext += self.key.decrypt_number(int(n))
+
+		return ptext
+
 	# a function mainly used during debugging; just prints the letter-to-number mapping of the key
 	def print_key(self):
 		print "Letter to Num:"
@@ -235,6 +244,9 @@ class Key:
 		self.let_to_num[letter].append(number)
 		self.letter_count[letter] += 1
 
+	def decrypt_number(self, number):
+		return self.num_to_let[int(number)]
+
 	# returns a Boolean reflecting whether or not the number has been mapped yet
 	def number_is_mapped(self,number):
 		return self.num_to_let[number] is not None
@@ -297,13 +309,23 @@ def scoreWord(word, letVals):
             score += letVals[letter]
     return score
 
+def removeLastWord(ctext):
+	clist = ctext.split(" ")
+	lword = clist[len(clist)-1]
+	clist = clist[:-1]
+	return " ".join(clist), lword
+
 # execute the script
 def main():
 	ciphertext = raw_input(">> Enter the ciphertext: ")
+	ciphertext, lastword = removeLastWord(ciphertext)
+
 	ds = DecryptionScheme(ciphertext)
 	plaintext = ds.decrypt()
+	lword =  ds.decryptLastWord(lastword)
+
 	print "\nMy plaintext guess is: "
-	print plaintext
+	print plaintext, lword
 
 if __name__ == "__main__":
 	main()
