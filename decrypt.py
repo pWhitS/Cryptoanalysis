@@ -1,3 +1,8 @@
+# Author: Fernando Maymi, Patrick Whitsell, Casey McGinley
+# Class: CS-GY 6903 Applied Cryptography
+# Instructor: Prof. Giovanni Di Crescenzo 
+# Project 1: Permutation Cipher Decryption
+
 import copy
 import argparse
 import sys
@@ -10,7 +15,6 @@ VERBOSE = False
 class DecryptionScheme:
 
 	def __init__(self,ciphertext):
-		self.word_length_freq_map = {} # letter frequencies
 		self.english_words_by_length = {} # word length frequencies in dictionary
 		self.ciphertext = ciphertext # the ciphertext
 		# list of words in ciphertext sorted by freq of words of the same length in dict
@@ -19,7 +23,6 @@ class DecryptionScheme:
 		self.head = None # the head of the recursive linked-list-like data structure Word
 		self.key = Key() # create new blank key
 
-		self.init_word_length_freq_map() # setup letter frequency map
 		self.read_english_words() # read in the words from the English dictionary
 		self.sort_ciphertext() # sort the words of the ciphertext by length (longest first)
 
@@ -58,6 +61,7 @@ class DecryptionScheme:
 		# return the plaintext
 		return " ".join(plainwords)
 
+	# decrypts a single word based on the key
 	def decryptSingleWord(self, lword):
 		ptext = ""
 		nums = lword.split(",")
@@ -73,37 +77,6 @@ class DecryptionScheme:
 		print self.key.let_to_num
 		print "Num to LEtter:"
 		print self.key.num_to_let
-
-	# sets up the dictionary for the frequencies of each word of a given length in english_words.txt
-	def init_word_length_freq_map(self):
-		self.word_length_freq_map[1] = 1
-		self.word_length_freq_map[2] = 140
-		self.word_length_freq_map[3] = 853
-		self.word_length_freq_map[4] = 3130
-		self.word_length_freq_map[5] = 6919
-		self.word_length_freq_map[6] = 11492
-		self.word_length_freq_map[7] = 16882
-		self.word_length_freq_map[8] = 19461
-		self.word_length_freq_map[9] = 16693
-		self.word_length_freq_map[10] = 11882
-		self.word_length_freq_map[11] = 8374
-		self.word_length_freq_map[12] = 5812
-		self.word_length_freq_map[13] = 3676
-		self.word_length_freq_map[14] = 2102
-		self.word_length_freq_map[15] = 1159
-		self.word_length_freq_map[16] = 583
-		self.word_length_freq_map[17] = 229
-		self.word_length_freq_map[18] = 107
-		self.word_length_freq_map[19] = 39
-		self.word_length_freq_map[20] = 29
-		self.word_length_freq_map[21] = 11
-		self.word_length_freq_map[22] = 4
-		self.word_length_freq_map[23] = 2
-		# self.word_length_freq_map[24] = 0 # no need to include words with freq 0
-		self.word_length_freq_map[25] = 1
-		# self.word_length_freq_map[26] = 0 # no need to include words with freq 0
-		# self.word_length_freq_map[27] = 0 # no need to include words with freq 0
-		self.word_length_freq_map[28] = 1
 
 	# reads in the words from english_words.txt and places them into a dictionary mapping length to a list of corresponding words
 	def read_english_words(self):
@@ -263,6 +236,7 @@ class Key:
 		self.let_to_num[letter].append(number)
 		self.letter_count[letter] += 1
 
+	# decrypts a single number based on the key; if the number hasn't been mapped yet, we find the first "mappable" letter and map it
 	def decrypt_number(self, number):
 		if self.number_is_mapped(number):
 			return self.num_to_let[int(number)]
@@ -323,6 +297,7 @@ class Key:
 class KeyMappingException(Exception):
 	pass
 
+# used to perform our fast and highly specific anlysis for Part 1 base don the 5 known plaintexts
 class InitialAnalysis:
 
 	def __init__(self, ctext):
@@ -415,12 +390,14 @@ class InitialAnalysis:
 
 		return self.plist[0]
 
+# returns the first n-1 words of the ciphertext as a list, and the last word as a separate value
 def removeLastWord(ctext):
 	clist = ctext.split(" ")
 	lword = clist[len(clist)-1]
 	clist = clist[:-1]
 	return " ".join(clist), lword
 
+# setup the argument parser
 def parse_args():
 	parser = argparse.ArgumentParser(description='Decryption Script: a solution for decrypting the ciphertexts for Project 1 in CS-GY 6903 Applied Cryptography; Team: Fernando Maymi, Patrick Whitsell and Casey McGinley')
 	parser.add_argument("-v", "--verbose", action="store_true", help="Outputs decryption attempts to stdout; useful for debugging")
@@ -430,12 +407,13 @@ def parse_args():
 # execute the script
 def main():
 	global VERBOSE
-	use_second_analysis = False
+	use_second_analysis = False # this flag indicates that the 2nd generic analysis method should be used
 	args = parse_args()
 	if args.verbose:
-		VERBOSE = True
+		VERBOSE = True # this flag sets up verbose output for debugging
 	if args.supress_naive_analysis:
-		use_second_analysis = True
+		use_second_analysis = True # by setting this to True here, we don't even bother trying the InitialAnalysis for the highly specifc 5 
+								   # plaintexts; we just skip to the generic analysis DecryptionScheme
 
 	ciphertext = raw_input(">> Enter the ciphertext: ")
 
@@ -447,6 +425,7 @@ def main():
 			print "\nMy plaintext guess is: "
 			print plaintext
 		else:
+			# if the InitialAnalysis fails, try the 2nd analysis
 			use_second_analysis = True
 
 	if use_second_analysis:
