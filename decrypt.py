@@ -226,8 +226,18 @@ class Key:
 class KeyMappingException(Exception):
 	pass
 
+
+def removeLastWord(ctext):
+	clist = ctext.split(" ")
+	lword = clist[len(clist)-1]
+	clist = clist[:-1]
+
+	return "".join(clist), lword
+
 def main():
 	ciphertext = raw_input(">> Enter the ciphertext: ")
+	ciphertext, lastword = removeLastWord(ciphertext)
+
 	ds = DecryptionScheme(ciphertext)
 	plaintext = ds.decrypt()
 	print "\nMy plaintext guess is: "
