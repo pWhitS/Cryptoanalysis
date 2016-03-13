@@ -236,10 +236,7 @@ class Word:
 	def scoreWord(self, word, letVals):
 	    score = 0
 	    for letter in word:
-	        if letter not in letVals:
-	            pass
-	        else:
-	            score += letVals[letter]
+	    	score += letVals[letter]
 	    return score
 
 # a simple class to maintain the partial (possibly complete) key we develop through decryption
