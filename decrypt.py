@@ -236,6 +236,8 @@ class Word:
 	def scoreWord(self, word, letVals):
 	    score = 0
 	    for letter in word:
+	    	if letter == "'":
+	    		continue
 	    	score += letVals[letter]
 	    return score
 
@@ -411,6 +413,7 @@ class InitialAnalysis:
 			return False
 
 		return self.plist[0]
+
 
 def removeLastWord(ctext):
 	clist = ctext.split(" ")
