@@ -389,11 +389,7 @@ class InitialAnalysis:
 
 		return self.plist[0]
 
-<<<<<<< HEAD
 # returns the first n-1 words of the ciphertext as a list, and the last word as a separate value
-=======
-
->>>>>>> hotfix-scoreWord
 def removeLastWord(ctext):
 	clist = ctext.split(" ")
 	lword = clist[len(clist)-1]
