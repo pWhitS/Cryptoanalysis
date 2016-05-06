@@ -40,6 +40,7 @@ In general with this strategy, plaintexts with larger lengths is an easier probl
 
 ### Basic Analysis
 A resonable decryption speed was acheived most of the time. Problem arose if there were no 'long' words to guess first. The longest word, which was actually fairly short, would be guessed first, fill in small key mapping, and would take a very long time to brute force the word space. <br>
-Another issue was that the program would mistakenly decrypt very short words. This was happening because the key mapping coincidentally would not create a contradiction before the whole plaintext was guessed. Example: 'red' was guessed instead of 'req'. In this example our letter frequency sorting strategy was working against us.
+Another issue was that the program would mistakenly decrypt very short words. This was happening because the key mapping coincidentally would not create a contradiction before the whole plaintext was guessed. Example: 'red' was guessed instead of 'req'. In this example our letter frequency sorting strategy was working against us. <br>
+Despite a few problems, this strategy was very successful. In testing our program was able decrypted 94.5% of the ciphertexts' letters correctly.
 
 
