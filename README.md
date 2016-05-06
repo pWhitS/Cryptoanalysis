@@ -43,6 +43,6 @@ A resonable decryption speed was acheived most of the time. Problem arose if the
 
 Another issue was that the program would mistakenly decrypt very short words. This was happening because the key mapping coincidentally would not create a contradiction before the whole plaintext was guessed. Example: 'red' was guessed instead of 'req'. In this example our letter frequency sorting strategy was working against us. <br>
 
-Despite a few problems, this strategy was very successful. In testing our program was able decrypted 94.5% of the ciphertexts' letters correctly.
+Despite a few problems, this strategy was very successful. In testing our program was able decrypt 94.5% of the ciphertexts' letters correctly.
 
 
