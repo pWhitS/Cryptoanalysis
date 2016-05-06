@@ -3,9 +3,9 @@ Applied Cryptography Project
 
 ## Who worked on this project?
 
-Patrick Whitsell pdw236@nyu.edu <br>
-Casey McGinely cmm771@nyu.edu <br>
-Fernando Myami fernando.maymi@nyu.edu <br>
+Patrick Whitsell (pdw236@nyu.edu) <br>
+Casey McGinely (cmm771@nyu.edu) <br>
+Fernando Myami (fernando.maymi@nyu.edu) <br>
 
 ## Objective
 1. Given a set of known plaintexts and a ciphertext, can we determine which plaintext was encrypted? (known plaintext attack) <br>
